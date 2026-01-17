@@ -9,7 +9,11 @@ class LandingController extends Controller
 {
     public function getPaket()
     {
-        $pakets = Paket::all();
+        $pakets = Paket::with([
+            'schedules' => function ($q) {
+            $q->orderBy('tanggal');
+        }
+        ])->get();
 
         return response()->json([   
             'status' => 'success',

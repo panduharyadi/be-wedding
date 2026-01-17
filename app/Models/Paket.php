@@ -7,12 +7,23 @@ use Illuminate\Database\Eloquent\Model;
 class Paket extends Model
 {
     protected $fillable = [
+        'image',
         'name',
         'price',
         'durasi',
         'benefits',
         'is_rias',
     ];
+
+    protected $casts = [
+        'benefits' => 'array',
+        'is_rias' => 'boolean',
+    ];
+
+    public function schedules()
+    {
+        return $this->hasMany(PaketSchedule::class);
+    }
 
     public function silabus()
     {

@@ -31,9 +31,24 @@ class OwnerController extends Controller
             'benefits' => 'required|array',
             'benefits.*' => 'string|max:255',
             'is_rias' => 'required|boolean',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+
+            // khusus rias
+            'schedules' => 'required_if:is_rias,true|array',
+            'schedules.*.tanggal' => 'required|date',
+            'schedules.*.jam_mulai' => 'required',
+            'schedules.*.jam_selesai' => 'required',
         ]);
 
+        // upload image
+        $imagePath = null;
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('pakets', 'public');
+        }
+
         $pakets = Paket::create([
+            'image' => $imagePath,
             'name' => $request->name,
             'price' => $request->price,
             'durasi' => $request->durasi,
@@ -41,16 +56,23 @@ class OwnerController extends Controller
             'is_rias' => $request->is_rias
         ]);
 
+        // simpan schedule kalau rias
+        if ($request->is_rias) {
+            foreach ($request->schedules as $schedule) {
+                $pakets->schedules()->create($schedule);
+            }
+        }
+
         return response()->json([
             'status' => 'success',
             'message' => 'Paket created successfully',
-            'data' => $pakets,
+            'data' => $pakets->load('schedules'),
         ], 201);
     }
 
     public function detailPaket($id)
     {
-        $paket = Paket::findOrFail($id);
+        $paket = Paket::with('schedules')->find($id);
 
         return response()->json([
             'status' => 'success',
@@ -229,5 +251,41 @@ class OwnerController extends Controller
             'totalUsers'       => $totalUsers,
             'conversionRate'   => $conversionRate,
         ]);
+    }
+
+    // Track Transaction
+    public function trackTransactions(Request $request)
+    {
+        $query = Transactions::with(['paket', 'user']);
+
+        // filter paket
+        if ($request->filled('paket_id')) {
+            $query->where('paket_id', $request->paket_id);
+        }
+
+        // search
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+                $q->where('order_id', 'like', "%{$search}%")
+                ->orWhereHas('user', function ($u) use ($search) {
+                    $u->where('name', 'like', "%{$search}%");
+                })
+                ->orWhereHas('paket', function ($p) use ($search) {
+                    $p->where('name', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        $transactions = $query
+            ->latest()
+            ->paginate($request->get('per_page', 5));
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'List of Transactions',
+            'data' => $transactions,
+        ], 200);
     }
 }

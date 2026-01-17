@@ -2,14 +2,25 @@
 
 namespace App\Http\Controllers\Customer;
 
+use App\Models\Paket;
+use App\Models\Reschedule;
 use App\Models\Transactions;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Reschedule;
 use Illuminate\Support\Facades\Auth;
 
 class RequestJadwalController extends Controller
 {
+    public function getPaketSchedules($paketId)
+    {
+        $paket = Paket::with('schedules')->findOrFail($paketId);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $paket->schedules
+        ]);
+    }
+
     public function requestJadwal(Request $request)
     {
         $request->validate([

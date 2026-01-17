@@ -87,6 +87,9 @@ Route::middleware(['auth:sanctum', 'role:owner'])->controller(OwnerController::c
     Route::get('/owner/employee', 'getAllEmployee');
     Route::post('/owner/employee', 'addEmployee');
     Route::delete('/owner/employee/{id}', 'removeEmployee');
+
+    // Route Track Transaction
+    Route::get('/owner/track/transactions', 'trackTransactions');
 });
 
 // customer
@@ -116,6 +119,7 @@ Route::middleware(['auth:sanctum', 'role:customer'])->controller(RatingControlle
 });
 
 Route::middleware(['auth:sanctum', 'role:customer'])->controller(RequestJadwalController::class)->group(function () {
+    Route::get('/paket/{paketId}/schedules', 'getPaketSchedules');
     Route::post('/customer/request/jadwal', 'requestJadwal');
 });
 
