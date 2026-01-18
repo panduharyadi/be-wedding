@@ -90,6 +90,12 @@ Route::middleware(['auth:sanctum', 'role:owner'])->controller(OwnerController::c
 
     // Route Track Transaction
     Route::get('/owner/track/transactions', 'trackTransactions');
+
+    // Route Certificate Management
+    Route::get('/owner/get/template', 'getCertificate');
+    Route::post('/owner/certificate/template', 'storeTemplate');
+    Route::post('/owner/certificate/assign', 'assignCertificate');
+    Route::post('/owner/certificate/{certificate}/generate', 'generateCertificate');
 });
 
 // customer
@@ -106,6 +112,9 @@ Route::middleware(['auth:sanctum', 'role:customer'])->controller(CustomerControl
 
     // profile routes
     Route::put('/customer/profile', 'updateProfile');
+
+    // my certificate
+    Route::get('/customer/certificate', 'myCertificate');
 });
 
 Route::middleware(['auth:sanctum', 'role:customer'])->controller(PaymentController::class)->group(function () {

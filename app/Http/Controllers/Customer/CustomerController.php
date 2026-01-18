@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Models\Chat;
+use App\Models\Certificate;
+use App\Models\Transactions;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Transactions;
 use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
@@ -106,6 +107,21 @@ class CustomerController extends Controller
             'success' => true,
             'data' => $user,
             'message' => 'Profil berhasil diperbarui'
+        ]);
+    }
+
+    // sertifikat
+    public function myCertificate(Request $request)
+    {
+        $user = $request->user();
+
+        $certificate = Certificate::where('user_id', $user->id)
+            ->latest()
+            ->first();
+
+        return response()->json([
+            'status' => 'success',
+            'data'   => $certificate
         ]);
     }
 }

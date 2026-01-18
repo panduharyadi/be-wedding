@@ -35,4 +35,9 @@ class Transactions extends Model
     {
         return $this->hasMany(Reschedule::class);
     }
+
+    public function certificate()
+    {
+        return $this->hasOne(Certificate::class, 'transaction_id');
+    }
 }
