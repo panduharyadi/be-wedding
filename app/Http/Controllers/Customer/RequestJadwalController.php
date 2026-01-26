@@ -24,7 +24,7 @@ class RequestJadwalController extends Controller
     public function requestJadwal(Request $request)
     {
         $request->validate([
-            'paket_id' => 'required|exists:pakets,id',
+            'paket_id' => 'required|exists:pakets,pk_paket_id',
             'tanggal' => 'required|date',
             'jam' => 'required',
             'alasan' => 'nullable|string'
@@ -47,7 +47,7 @@ class RequestJadwalController extends Controller
         $schedule = Reschedule::create([
             'user_id' => $user->id,
             'paket_id' => $request->paket_id,
-            'transaction_id' => $purchased->id,
+            'transaction_id' => $purchased->pk_transaction_id,
             'tanggal' => $request->tanggal,
             'jam' => $request->jam,
             'alasan' => $request->alasan,

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('silabuses', function (Blueprint $table) {
-            $table->id();
+            $table->id('pk_silabus_id');
             $table->unsignedBigInteger('paket_id');
 
             $table->string('title');
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->date('option_change'); // opsi untuk request perubahan jadwal
 
             $table->timestamps();
-            $table->foreign('paket_id')->references('id')->on('pakets')->onDelete('cascade');
+            $table->foreign('paket_id')->references('pk_paket_id')->on('pakets')->onDelete('cascade');
         });
     }
 

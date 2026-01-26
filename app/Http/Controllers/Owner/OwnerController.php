@@ -77,7 +77,9 @@ class OwnerController extends Controller
 
     public function detailPaket($id)
     {
-        $paket = Paket::with('schedules')->find($id);
+        $paket = Paket::with('schedules')
+            ->where('pk_paket_id', $id)
+            ->firstOrFail();
 
         return response()->json([
             'status' => 'success',
@@ -94,7 +96,7 @@ class OwnerController extends Controller
             'price' => 'required|numeric',
         ]);
 
-        $paket = Paket::findOrFail($id);
+        $paket = Paket::where('pk_paket_id', $id)->firstOrFail();
 
         $paket->update([
             'name' => $request->name,
@@ -110,7 +112,7 @@ class OwnerController extends Controller
 
     public function deletePaket($id)
     {
-        $paket = Paket::findOrFail($id);
+        $paket = Paket::where('pk_paket_id', $id)->firstOrFail();
         $paket->delete();
 
         return response()->json([
@@ -343,7 +345,7 @@ class OwnerController extends Controller
             'paket_id'        => 'required|exists:pakets,id',
             'transaction_ids' => 'required|array|min:1',
             'transaction_ids.*' => 'exists:transactions,id',
-            'template_id'     => 'required|exists:certificate_templates,id',
+            'template_id'     => 'required|exists:certificate_templates,pk_certificate_template_id',
         ]);
 
         $created = [];
@@ -367,7 +369,7 @@ class OwnerController extends Controller
                 'user_id'            => $trx->user_id,
                 'paket_id'           => $request->paket_id,
                 'transaction_id'     => $transactionId,
-                'template_id'        => $request->template_id,
+                'template_id'        => $request->pk_certificate_template_id,
                 'certificate_number' => $certificateNumber,
                 'file_path'          => 'pending',
             ]);

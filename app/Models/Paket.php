@@ -6,6 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Paket extends Model
 {
+    protected $primaryKey = 'pk_paket_id';
+    public $incrementing = true;
+    protected $keyType = 'int';
+
+    protected $appends = ['id'];
+
     protected $fillable = [
         'image',
         'name',
@@ -22,21 +28,26 @@ class Paket extends Model
 
     public function schedules()
     {
-        return $this->hasMany(PaketSchedule::class);
+        return $this->hasMany(PaketSchedule::class, 'paket_id', 'pk_paket_id');
     }
 
     public function silabus()
     {
-        return $this->hasMany(Silabus::class);
+        return $this->hasMany(Silabus::class, 'paket_id', 'pk_paket_id');
     }
 
     public function transactions()
     {
-        return $this->hasMany(Transactions::class);
+        return $this->hasMany(Transactions::class, 'paket_id', 'pk_paket_id');
     }
 
     public function reschedule()
     {
-        return $this->hasMany(Reschedule::class);
+        return $this->hasMany(Reschedule::class, 'paket_id', 'pk_paket_id');
+    }
+
+    public function getIdAttribute()
+    {
+        return $this->pk_paket_id;
     }
 }

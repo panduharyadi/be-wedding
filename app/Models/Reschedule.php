@@ -6,6 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Reschedule extends Model
 {
+    protected $primaryKey = 'pk_reschedule_id';
+    public $incrementing = true;
+    protected $keyType = 'int';
+
+    protected $appends = ['id'];
+
     protected $fillable = [
         'user_id',
         'paket_id',
@@ -16,9 +22,14 @@ class Reschedule extends Model
         'status'
     ];
 
+    public function getIdAttribute()
+    {
+        return $this->pk_reschedule_id;
+    }
+
     public function paket()
     {
-        return $this->belongsTo(Paket::class);
+        return $this->belongsTo(Paket::class, 'paket_id', 'pk_paket_id');
     }
 
     public function user()
@@ -28,6 +39,6 @@ class Reschedule extends Model
 
     public function transaction()
     {
-        return $this->belongsTo(Transactions::class);
+        return $this->belongsTo(Transactions::class, 'transaction_id', 'pk_transaction_id');
     }
 }

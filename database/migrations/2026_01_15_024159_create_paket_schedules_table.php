@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('paket_schedules', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('paket_id')->constrained()->onDelete('cascade');
+            $table->id('pk_paket_schedule_id');
+            $table->unsignedBigInteger('paket_id');
+            $table->foreign('paket_id')->references('pk_paket_id')->on('pakets')->onDelete('cascade');
             $table->date('tanggal');
             $table->time('jam_mulai');
             $table->time('jam_selesai');

@@ -12,10 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('reschedules', function (Blueprint $table) {
-            $table->id();
+            $table->id('pk_reschedule_id');
+            $table->unsignedBigInteger('paket_id');
+            $table->unsignedBigInteger('transaction_id');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('paket_id')->constrained()->onDelete('cascade');
-            $table->foreignId('transaction_id')->constrained()->onDelete('cascade');
+            $table->foreign('paket_id')->references('pk_paket_id')->on('pakets')->onDelete('cascade');
+            $table->foreign('transaction_id')->references('pk_transaction_id')->on('transactions')->onDelete('cascade');
             $table->date('tanggal');
             $table->string('jam');
             $table->text('alasan')->nullable();

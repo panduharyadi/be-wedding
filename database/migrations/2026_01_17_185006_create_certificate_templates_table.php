@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('certificate_templates', function (Blueprint $table) {
-            $table->id();
+            $table->id('pk_certificate_template_id');
             $table->foreignId('owner_id')->constrained('users')->cascadeOnDelete();
             $table->string('name');
             $table->string('background_path');

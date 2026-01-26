@@ -58,7 +58,7 @@ class AdminController extends Controller
             'option_change' => 'nullable|date',
         ]);
 
-        $pakets = Paket::findOrFail($paketId);
+        $pakets = Paket::where('pk_paket_id', $paketId)->firstOrFail();
 
         $silabus = $pakets->silabus()->create([
             'title' => $request->title,
@@ -76,14 +76,9 @@ class AdminController extends Controller
 
     public function getSilabus($paketId)
     {
-        $paket = Paket::with('silabus')->findOrFail($paketId);
-
-        if (!$paket) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Paket tidak ditemukan'
-            ], 404);
-        }
+        $paket = Paket::with('silabus')
+            ->where('pk_paket_id', $paketId)
+            ->firstOrFail();
 
         return response()->json([
             'status' => 'success',
@@ -105,12 +100,15 @@ class AdminController extends Controller
 
     public function approveReschedule($id)
     {
-        $res = Reschedule::findOrFail($id);
+        $res = Reschedule::where('pk_reschedule_id', $id)->firstOrFail();
 
         $tanggalBaru = $res->tanggal;
 
         // update data transaction
-        $transactions = Transactions::find($res->transaction_id);
+        $transactions = Transactions::where(
+            'pk_transaction_id',
+            $res->transaction_id
+        )->first();
 
         if($transactions) {
             $transactions->tanggal = $tanggalBaru;
@@ -127,7 +125,7 @@ class AdminController extends Controller
 
     public function rejectReschedule($id)
     {
-        $res = Reschedule::find($id);
+        $res = Reschedule::where('pk_reschedule_id', $id)->first();
 
         if(!$res) {
             return response()->json([
@@ -152,7 +150,7 @@ class AdminController extends Controller
             ->get()
             ->map(function ($msg) {
                 return [
-                    'id' => $msg->id,
+                    'id' => $msg->pk_chat_id,
                     'message' => $msg->message,
                     'sender' => $msg->sender ?? ($msg->from_admin ? "admin" : "customer"),
                     'created_at' => $msg->created_at,

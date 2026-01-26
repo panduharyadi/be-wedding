@@ -12,14 +12,14 @@ class RatingController extends Controller
     public function ratingPaket(Request $request)
     {
         $request->validate([
-            'transaction_id' => 'required|exists:transactions,id',
+            'transaction_id' => 'required|exists:transactions,pk_transaction_id',
             'rating' => 'required|integer|min:1|max:5',
             'review' => 'nullable|string'
         ]);
 
         $user = $request->user();
 
-        $transaction = Transactions::where('id', $request->transaction_id)
+        $transaction = Transactions::where('pk_transaction_id', $request->transaction_id)
             ->where('user_id', $user->id)
             ->where('status', 'success')
             ->first();
@@ -30,7 +30,7 @@ class RatingController extends Controller
             ], 403);
         }
 
-        $existing = Rating::where('transaction_id', $transaction->id)->first();
+        $existing = Rating::where('transaction_id', $transaction->pk_transaction_id)->first();
         if($existing) {
             return response()->json([
                 'message' => 'Anda sudah pernah memberikan rating pada paket ini'
@@ -39,7 +39,7 @@ class RatingController extends Controller
 
         $rating = Rating::create([
             'user_id' => $user->id,
-            'transaction_id' => $transaction->id,
+            'transaction_id' => $transaction->pk_transaction_id,
             'rating' => $request->rating,
             'review' => $request->review
         ]);

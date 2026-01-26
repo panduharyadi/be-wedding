@@ -12,11 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('certificates', function (Blueprint $table) {
-            $table->id();
+            $table->id('pk_certificate_id');
+            $table->unsignedBigInteger('paket_id');
+            $table->unsignedBigInteger('transaction_id');
+            $table->unsignedBigInteger('template_id');
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('paket_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('transaction_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('template_id')->constrained('certificate_templates')->cascadeOnDelete();
+            $table->foreign('paket_id')->references('pk_paket_id')->on('pakets')->cascadeOnDelete();
+            $table->foreign('transaction_id')->references('pk_transaction_id')->on('transactions')->cascadeOnDelete();
+            $table->foreign('template_id')->references('pk_certificate_template_id')->on('certificate_templates')->cascadeOnDelete();
 
             $table->string('certificate_number')->unique();
             $table->string('file_path');

@@ -13,7 +13,7 @@ class PaymentController extends Controller
     public function getSnapToken(Request $request)
     {
         $request->validate([
-            'paket_id' => 'required|integer|exists:pakets,id',
+            'paket_id' => 'required|integer|exists:pakets,pk_paket_id',
             'price' => 'required|numeric|min:1000',
             'package_name' => 'required|string',
         ]);
@@ -24,7 +24,7 @@ class PaymentController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        $paket = Paket::find($request->paket_id);
+        $paket = Paket::where('pk_paket_id', $request->paket_id)->firstOrFail();
 
         Config::$serverKey = env('MIDTRANS_SERVER_KEY');
         Config::$isProduction = env('MIDTRANS_IS_PRODUCTION') === 'true';
@@ -36,7 +36,7 @@ class PaymentController extends Controller
         $transaction = Transactions::create([
             'order_id' => $orderId,
             'user_id' => $user->id,
-            'paket_id' => $paket->id,
+            'paket_id' => $paket->pk_paket_id,
             'nama_paket' => $request->package_name,
             'total' => $request->price,
             'tanggal' => now(),

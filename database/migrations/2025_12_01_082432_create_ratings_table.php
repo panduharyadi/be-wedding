@@ -12,9 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('ratings', function (Blueprint $table) {
-            $table->id();
+            $table->id('pk_rating_id');
+            $table->unsignedBigInteger('transaction_id');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('transaction_id')->constrained('transactions')->onDelete('cascade');
+            $table->foreign('transaction_id')->references('pk_transaction_id')->on('transactions')->onDelete('cascade');
             $table->integer('rating'); // 1–5
             $table->text('review')->nullable();
             $table->timestamps();
